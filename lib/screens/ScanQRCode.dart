@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:noriskclient/config/Colors.dart';
-import 'package:noriskclient/screens/GiveawayAdminInfo.dart';
 import 'package:noriskclient/screens/GiveawayResult.dart';
 import 'package:noriskclient/utils/NoRiskApi.dart';
 import 'package:noriskclient/widgets/QRScannerOverlayShape.dart';
 
 class ScanQRCode extends StatefulWidget {
-  final bool isAdminScan;
+  const ScanQRCode({super.key, required this.redeem});
 
-  const ScanQRCode({super.key, this.isAdminScan = false});
+  final Function(String username) redeem;
 
   @override
   _ScanQRCodeState createState() => _ScanQRCodeState();
@@ -99,54 +98,19 @@ class _ScanQRCodeState extends State<ScanQRCode> {
       MobileScannerController controller, String code) async {
     print('QR Code Detected: $code');
 
-    if (code.contains("/giveaways/")) {
-      String giveawayId = code.split("/")[code.split("/").length - 2];
+    if (code.contains("NRC-GAMESCOM-2026-")) {
+      String targetUsername = code.replaceFirst('NRC-GAMESCOM-2026-', '');
 
       controller.stop();
       controller.dispose();
-      if (widget.isAdminScan) {
-        Map<String, dynamic> giveawayData =
-            await NoRiskApi().getGiveawayAdminInfo(giveawayId);
 
-        if (giveawayData['itemId'] == null) {
-          Fluttertoast.showToast(msg: 'Invalid voucher QR code');
-          return;
-        }
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GiveawayAdminInfo(
-                  giveawayId: giveawayId,
-                  itemId: giveawayData['itemId'],
-                  additionalInfo:
-                      giveawayData['additionalInformation'] ?? 'null'),
-            ));
-      } else {
-        if (lastRedeem! + 1000 >= DateTime.now().millisecondsSinceEpoch) {
-          return;
-        }
-        
-        Map<String, dynamic>? resultData =
-            await NoRiskApi().redeemGiveaway(giveawayId);
-
-        if (resultData == null) {
-          Fluttertoast.showToast(msg: 'Invalid voucher QR code');
-          return;
-        }
-
-        lastRedeem = DateTime.now().millisecondsSinceEpoch;
-
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GiveawayResult(
-                itemId: resultData['id'] ?? '',
-                itemName: resultData['name'] ?? '',
-                itemRarity: resultData['rarity'] ?? '',
-                errorMessage: resultData['error'] ?? '',
-              ),
-            ));
+      if (lastRedeem! + 1000 >= DateTime.now().millisecondsSinceEpoch) {
+        return;
       }
+
+      widget.redeem(targetUsername);
+
+      lastRedeem = DateTime.now().millisecondsSinceEpoch;
     }
   }
 }

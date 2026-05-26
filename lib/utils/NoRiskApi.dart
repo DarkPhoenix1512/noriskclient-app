@@ -126,21 +126,10 @@ class NoRiskApi {
         "messaging", "chat/$chatId/messages", {'messageID': messageId}, null);
   }
 
-  Future<Map<String, dynamic>> getGiveawayAdminInfo(String giveawayId) async {
-    Map<String, dynamic>? data =
-        await _fetchData("cosmetics", "giveaways/admin/$giveawayId", null);
-
-    if (data == null) {
-      return {};
-    } else {
-      return data;
-    }
-  }
-
-  Future<Map<String, dynamic>?> redeemGiveaway(String giveawayId) async {
+  Future<Map<String, dynamic>?> redeemGamescom(String username) async {
     final response = await http.post(
       Uri.parse(
-          '${getBaseUrl(getUserData['experimental'], "cosmetics")}/giveaways/$giveawayId/redeem?uuid=${getUserData['uuid']}'),
+          '${getBaseUrl(getUserData['experimental'], "cosmetics")}/giveaways/gamescom/redeem?uuid=${getUserData['uuid']}&target=$username'),
       body: null,
       headers: {
         'Authorization': 'Bearer ${getUserData['token']}',
@@ -170,12 +159,24 @@ class NoRiskApi {
     }
   }
 
-  Future<Map<String, dynamic>?> getGamescomInfos() async {
-    print(
-        'https://api${getUserData['experimental'] == true ? '-staging' : ''}.norisk.gg/api/v1/discord/gamescom-infos');
+  Future<List<dynamic>?> getGamescomEvents() async {
+    print('https://cdn.norisk.gg/backend-resources/gamescom_events.json');
     final response = await http.get(Uri.parse(
-        'https://api${getUserData['experimental'] == true ? '-staging' : ''}.norisk.gg/api/v1/discord/gamescom-infos'));
+        'https://cdn.norisk.gg/backend-resources/gamescom_events.json'));
 
+    if (response.statusCode == 200) {
+      return response.body == 'null'
+          ? null
+          : jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<dynamic>?> getGamescomAdmins() async {
+    print('https://cdn.norisk.gg/backend-resources/gamescom_admins.json');
+    final response = await http.get(Uri.parse(
+        'https://cdn.norisk.gg/backend-resources/gamescom_admins.json'));
     if (response.statusCode == 200) {
       return response.body == 'null'
           ? null

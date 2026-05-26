@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:noriskclient/l10n/app_localizations.dart';
 import 'package:noriskclient/config/Colors.dart';
 import 'package:noriskclient/main.dart';
-import 'package:noriskclient/screens/ScanQRCode.dart';
-import 'package:noriskclient/screens/mcreal/ImageViewer.dart';
 import 'package:noriskclient/utils/NoRiskApi.dart';
+import 'package:noriskclient/widgets/NoRiskButton.dart';
 import 'package:noriskclient/widgets/NoRiskContainer.dart';
 import 'package:noriskclient/widgets/NoRiskText.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Gamescom extends StatefulWidget {
   const Gamescom({super.key});
@@ -15,166 +15,316 @@ class Gamescom extends StatefulWidget {
   State<Gamescom> createState() => GamescomState();
 }
 
+class Timeslot {
+  final DateTime start;
+  final DateTime end;
+  final String locationName;
+  final double latitude;
+  final double longitude;
+  Timeslot({
+    required this.start,
+    required this.end,
+    required this.locationName,
+    required this.latitude,
+    required this.longitude,
+  });
+}
+
 class GamescomState extends State<Gamescom> {
-  Map<String, dynamic>? gamescomInfos;
+  List<Timeslot> timeslots = [];
+
+  void openMaps(Timeslot slot) async {
+    final lat = slot.latitude;
+    final lng = slot.longitude;
+    final label = Uri.encodeComponent(slot.locationName);
+    String url;
+    if (isIOS) {
+      url = 'maps://?ll=$lat,$lng&q=$label';
+    } else {
+      url =
+          'https://www.google.com/maps/search/?api=1&query=$lat,$lng&query_place_id=$label';
+    }
+    await launchUrlString(url);
+  }
+
+  void showQr(BuildContext context) {
+    final username = cache['usernames']?[getUserData['uuid']];
+    if (!username) return;
+    showDialog(
+      context: context,
+      barrierColor: Color.fromARGB(220, 0, 0, 0),
+      builder: (_) =>
+          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 1.5,
+          child: Column(children: [
+            QrImageView(
+              data: 'NRC-GAMESCOM-2026-$username',
+              foregroundColor: NoRiskClientColors.text,
+              embeddedImage: AssetImage('lib/assets/app/flash.png'),
+              embeddedImageStyle:
+                  QrEmbeddedImageStyle(color: NoRiskClientColors.blue),
+            ),
+          ]),
+        ),
+      ]),
+    );
+  }
+
+  bool isActive(Timeslot slot) {
+    final now = DateTime.now();
+    return now.isAfter(slot.start) && now.isBefore(slot.end);
+  }
+
+  bool isUpcoming(Timeslot slot) {
+    final now = DateTime.now();
+    return now.isBefore(slot.start);
+  }
+
+  bool isPassed(Timeslot slot) {
+    final now = DateTime.now();
+    return now.isAfter(slot.end);
+  }
+
+  Timeslot? getActiveSlot() {
+    for (final slot in timeslots) {
+      if (isActive(slot)) return slot;
+    }
+    return null;
+  }
+
+  int getNextEventIndex() {
+    final now = DateTime.now();
+    for (int i = 0; i < timeslots.length; i++) {
+      if (timeslots[i].start.isAfter(now) ||
+          (timeslots[i].start.isBefore(now) && timeslots[i].end.isAfter(now))) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   @override
   void initState() {
+    loadEvents();
     super.initState();
-    loadGamescomInfos();
   }
 
   @override
   Widget build(BuildContext context) {
+    final activeSlot = getActiveSlot();
+    final int nextIdx = getNextEventIndex();
     return Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: NoRiskClientColors.background,
-        body: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 85,
-                    bottom: 150 +
-                        (isAndroid
-                            ? MediaQuery.of(context).viewPadding.bottom
-                            : 0),
-                    left: 10,
-                    right: 10),
-                child: RefreshIndicator(
-                    onRefresh: () async {
-                      setState(() {
-                        gamescomInfos = null;
-                      });
-                      loadGamescomInfos();
-                    },
-                    child: ListView(children: gamescomInfos == null ? [
-                      Center(
-                        child: NoRiskText(
-                          AppLocalizations.of(context)!.gamescom_no_infos.toLowerCase(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: NoRiskClientColors.textLight,
-                              fontSize: 25),
-                        ),
-                      )
-                    ] : [
-                      NoRiskText(gamescomInfos!['text']?.toString().toLowerCase() ?? '',
-                          spaceTop: false,
-                          spaceBottom: false,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.normal,
-                              height: 0.75,
-                              color: NoRiskClientColors.text)),
-                      const SizedBox(height: 5),
-                      NoRiskText('~ ${gamescomInfos!['author']?.toString().toLowerCase() ?? 'unknown'} - ${gamescomInfos!['createdAt'] != null
-                            ? DateTime.fromMillisecondsSinceEpoch(gamescomInfos!['createdAt']).toLocal().toString().split('.')[0].replaceAll('-', '.')
-                            : 'unknown'}',
-                      spaceTop: false,
-                      spaceBottom: false,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color: NoRiskClientColors.text)),
-                      const SizedBox(height: 20),
-                      if (gamescomInfos!['images'] != null)
-                        ...gamescomInfos!['images'].map<Widget>((image) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: GestureDetector(
-                              onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ImageViewer(image: Image.network(image)),
-                                ),
-                              ),
-                              child: Image.network(
-                                image,
-                                fit: BoxFit.contain,
-                                width: double.infinity,
-                                height: 200,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Center(
-                                    child: NoRiskText(
-                                      'Image could not be loaded',
-                                      style: TextStyle(
-                                          color: NoRiskClientColors.textLight,
-                                          fontSize: 16),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                    ])),
+      resizeToAvoidBottomInset: true,
+      backgroundColor: NoRiskClientColors.background,
+      body: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                top: 85,
+                bottom: 150 +
+                    (isAndroid ? MediaQuery.of(context).viewPadding.bottom : 0),
+                left: 10,
+                right: 10,
               ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 35),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: NoRiskText('gamescom',
-                            spaceTop: false,
-                            spaceBottom: false,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 45,
-                                fontWeight: FontWeight.bold,
-                                color: NoRiskClientColors.text)),
-                    ),
-                  ),
-                            const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      bottom: 55 +
-                          (isAndroid
-                              ? MediaQuery.of(context).viewPadding.bottom
-                              : 0)),
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (BuildContext context) {
-                      return ScanQRCode();
-                    })),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+              child: RefreshIndicator(
+                onRefresh: () async => loadEvents(),
+                child: ListView.separated(
+                  itemCount: timeslots.length,
+                  separatorBuilder: (_, __) => SizedBox(height: 20),
+                  itemBuilder: (context, idx) {
+                    final slot = timeslots[idx];
+                    final passed = isPassed(slot);
+                    final bool isNext = idx == nextIdx;
+                    final Color bgColor = passed
+                        ? Colors.red.shade700
+                        : (isNext ? NoRiskClientColors.blue : Colors.white);
+                    return Opacity(
+                      opacity: passed ? 0.5 : 1.0,
                       child: NoRiskContainer(
-                        height: 65,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: NoRiskClientColors.blue,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                          child: NoRiskText(
-                              AppLocalizations.of(context)!
-                                  .signIn_scanQrCode
-                                  .toLowerCase(),
-                              spaceTop: false,
-                              spaceBottom: false,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 35,
-                                  fontWeight: FontWeight.w500)),
+                        color: bgColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(18),
+                          child: Stack(children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                NoRiskText(
+                                  slot.locationName.toLowerCase(),
+                                  spaceTop: false,
+                                  spaceBottom: false,
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 10),
+                                NoRiskText(
+                                  '${slot.start.day.toString().padLeft(2, '0')}.${slot.start.month.toString().padLeft(2, '0')}.${slot.start.year}',
+                                  spaceTop: false,
+                                  spaceBottom: false,
+                                  style: TextStyle(
+                                      fontSize: 28,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                NoRiskText(
+                                  '${slot.start.hour.toString().padLeft(2, '0')}:${slot.start.minute.toString().padLeft(2, '0')} - '
+                                  '${slot.end.hour.toString().padLeft(2, '0')}:${slot.end.minute.toString().padLeft(2, '0')}',
+                                  spaceTop: false,
+                                  spaceBottom: false,
+                                  style: TextStyle(
+                                      fontSize: 44,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                if (!isPassed(slot)) const SizedBox(height: 10),
+                                if (!isPassed(slot))
+                                  Row(
+                                    children: [
+                                      NoRiskButton(
+                                        onTap: () => openMaps(slot),
+                                        color: bgColor,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5),
+                                          child: NoRiskText(
+                                              'Show Location'.toLowerCase(),
+                                              spaceTop: false,
+                                              spaceBottom: false,
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color:
+                                                      NoRiskClientColors.text)),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      if (isActive(slot))
+                                        NoRiskButton(
+                                          onTap: () => showQr(context),
+                                          color: bgColor,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5),
+                                            child: NoRiskText(
+                                                'Show QR Code'.toLowerCase(),
+                                                spaceTop: false,
+                                                spaceBottom: false,
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: NoRiskClientColors
+                                                        .text)),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                            if (isActive(slot))
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: PulsingSquare(
+                                    color: NoRiskClientColors.blue),
+                              ),
+                          ]),
                         ),
                       ),
-                    ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 45),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: NoRiskText(
+                  'gamescom',
+                  spaceTop: false,
+                  spaceBottom: false,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                    color: NoRiskClientColors.text,
                   ),
                 ),
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  void loadGamescomInfos() async {
-    Map<String, dynamic>? data = await NoRiskApi().getGamescomInfos();
+  void loadEvents() async {
+    var res = await NoRiskApi().getGamescomEvents();
+
+    if (res == null) {
+      setState(() {
+        timeslots = [];
+      });
+      return;
+    }
+
+    List<Timeslot> _timeslots = [];
+    for (var slot in res) {
+      _timeslots.add(Timeslot(
+              start: DateTime.fromMillisecondsSinceEpoch(slot['start']),
+              end: DateTime.fromMillisecondsSinceEpoch(slot['end']),
+              locationName: slot['locationName'],
+              latitude: slot['latitude'],
+              longitude: slot['longitude']));
+    }
 
     setState(() {
-      gamescomInfos = data;
+      timeslots = _timeslots;
     });
+  }
+}
+
+class PulsingSquare extends StatefulWidget {
+  final Color color;
+  const PulsingSquare({Key? key, required this.color}) : super(key: key);
+  @override
+  State<PulsingSquare> createState() => _PulsingSquareState();
+}
+
+class _PulsingSquareState extends State<PulsingSquare>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.7, end: 1).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _animation,
+      child: Container(
+        width: 15,
+        height: 15,
+        decoration: BoxDecoration(
+          color: widget.color,
+        ),
+      ),
+    );
   }
 }

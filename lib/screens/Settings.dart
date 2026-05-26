@@ -5,8 +5,9 @@ import 'package:noriskclient/config/Colors.dart';
 import 'package:noriskclient/main.dart';
 import 'package:noriskclient/config/Config.dart';
 import 'package:noriskclient/provider/localeProvider.dart';
-import 'package:noriskclient/screens/ScanQRCode.dart';
 import 'package:noriskclient/screens/settings/Blocked.dart';
+import 'package:noriskclient/screens/settings/GamescomAdmin.dart';
+import 'package:noriskclient/utils/NoRiskApi.dart';
 import 'package:noriskclient/widgets/NoRiskBackButton.dart';
 import 'package:noriskclient/widgets/NoRiskContainer.dart';
 import 'package:noriskclient/widgets/NoRiskText.dart';
@@ -26,9 +27,12 @@ class Settings extends StatefulWidget {
 class SettingsState extends State<Settings> {
   PackageInfo? packageInfo;
 
+  List gamescomAdmins = [];
+
   @override
   void initState() {
     loadAppInfo();
+    loadGamescomAdmins();
     super.initState();
   }
 
@@ -160,10 +164,8 @@ class SettingsState extends State<Settings> {
                   ),
                   const SizedBox(height: 5),
                   GestureDetector(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Blocked())),
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Blocked())),
                     child: NoRiskContainer(
                       width: double.infinity,
                       height: 50,
@@ -304,18 +306,14 @@ class SettingsState extends State<Settings> {
                       ),
                     ),
                   ),
-                  if (['DEVELOPER', 'ADMIN'].contains(cache['profiles']
-                              ?[getUserData['uuid']]?['nrcUser']?['rank']
-                          ?.toString()
-                          .toUpperCase() ??
-                      'DEFAULT'))
+                  if (gamescomAdmins.contains(getUserData['uuid']))
                     Column(children: [
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const SizedBox(width: 5),
-                          NoRiskText('Admin Options'.toLowerCase(),
+                          NoRiskText('Gamescom'.toLowerCase(),
                               spaceTop: false,
                               spaceBottom: false,
                               style: const TextStyle(
@@ -328,13 +326,12 @@ class SettingsState extends State<Settings> {
                       GestureDetector(
                         onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const ScanQRCode(isAdminScan: true))),
+                                builder: (context) => const GamescomAdmin())),
                         child: NoRiskContainer(
                           width: double.infinity,
                           height: 50,
                           child: Center(
-                            child: NoRiskText('Get Giveaway Info'.toLowerCase(),
+                            child: NoRiskText('Gamescom Admin'.toLowerCase(),
                                 spaceTop: false,
                                 spaceBottom: false,
                                 style: const TextStyle(
@@ -418,8 +415,7 @@ class SettingsState extends State<Settings> {
                   const SizedBox(height: 5),
                   Center(
                     child: GestureDetector(
-                      onTap: () => launchUrlString(
-                          'https://timlohrer.dev',
+                      onTap: () => launchUrlString('https://timlohrer.dev',
                           mode: LaunchMode.externalApplication),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -464,6 +460,14 @@ class SettingsState extends State<Settings> {
     PackageInfo _packageInfo = await PackageInfo.fromPlatform();
     setState(() {
       packageInfo = _packageInfo;
+    });
+  }
+
+  void loadGamescomAdmins() async {
+    var admins = await NoRiskApi().getGamescomAdmins() ??
+        ['625dd22b-bad2-4b82-a0bc-e43ba1c1a7fd']; // AimShock as fallback
+    setState(() {
+      gamescomAdmins = admins;
     });
   }
 }

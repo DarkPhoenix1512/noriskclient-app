@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noriskclient/config/Colors.dart';
 import 'package:noriskclient/main.dart';
 import 'package:noriskclient/utils/NoRiskApi.dart';
+import 'package:noriskclient/widgets/NoRiskBackButton.dart';
 import 'package:noriskclient/widgets/NoRiskButton.dart';
 import 'package:noriskclient/widgets/NoRiskContainer.dart';
 import 'package:noriskclient/widgets/NoRiskText.dart';
@@ -123,8 +124,8 @@ class GamescomState extends State<Gamescom> {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                top: 85,
-                bottom: 150 +
+                top: 95,
+                bottom:
                     (isAndroid ? MediaQuery.of(context).viewPadding.bottom : 0),
                 left: 10,
                 right: 10,
@@ -141,73 +142,62 @@ class GamescomState extends State<Gamescom> {
                     final Color bgColor = passed
                         ? Colors.red.shade700
                         : (isNext ? NoRiskClientColors.blue : Colors.white);
-                    return Opacity(
-                      opacity: passed ? 0.5 : 1.0,
-                      child: NoRiskContainer(
-                        color: bgColor,
-                        child: Padding(
-                          padding: const EdgeInsets.all(18),
-                          child: Stack(children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                NoRiskText(
-                                  slot.locationName.toLowerCase(),
-                                  spaceTop: false,
-                                  spaceBottom: false,
-                                  style: TextStyle(
-                                      fontSize: 26,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 10),
-                                NoRiskText(
-                                  '${slot.start.day.toString().padLeft(2, '0')}.${slot.start.month.toString().padLeft(2, '0')}.${slot.start.year}',
-                                  spaceTop: false,
-                                  spaceBottom: false,
-                                  style: TextStyle(
-                                      fontSize: 28,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                NoRiskText(
-                                  '${slot.start.hour.toString().padLeft(2, '0')}:${slot.start.minute.toString().padLeft(2, '0')} - '
-                                  '${slot.end.hour.toString().padLeft(2, '0')}:${slot.end.minute.toString().padLeft(2, '0')}',
-                                  spaceTop: false,
-                                  spaceBottom: false,
-                                  style: TextStyle(
-                                      fontSize: 44,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                if (!isPassed(slot)) const SizedBox(height: 10),
-                                if (!isPassed(slot))
-                                  Row(
-                                    children: [
-                                      NoRiskButton(
-                                        onTap: () => openMaps(slot),
-                                        color: bgColor,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5),
-                                          child: NoRiskText(
-                                              'Show Location'.toLowerCase(),
-                                              spaceTop: false,
-                                              spaceBottom: false,
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  color:
-                                                      NoRiskClientColors.text)),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      if (isActive(slot))
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          bottom: idx == timeslots.length - 1 ? 50 : 0),
+                      child: Opacity(
+                        opacity: passed ? 0.5 : 1.0,
+                        child: NoRiskContainer(
+                          color: bgColor,
+                          child: Padding(
+                            padding: const EdgeInsets.all(18),
+                            child: Stack(children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  NoRiskText(
+                                    slot.locationName.toLowerCase(),
+                                    spaceTop: false,
+                                    spaceBottom: false,
+                                    style: TextStyle(
+                                        fontSize: 26,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 10),
+                                  NoRiskText(
+                                    '${slot.start.day.toString().padLeft(2, '0')}.${slot.start.month.toString().padLeft(2, '0')}.${slot.start.year}',
+                                    spaceTop: false,
+                                    spaceBottom: false,
+                                    style: TextStyle(
+                                        fontSize: 28,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  NoRiskText(
+                                    '${slot.start.hour.toString().padLeft(2, '0')}:${slot.start.minute.toString().padLeft(2, '0')} - '
+                                    '${slot.end.hour.toString().padLeft(2, '0')}:${slot.end.minute.toString().padLeft(2, '0')}',
+                                    spaceTop: false,
+                                    spaceBottom: false,
+                                    style: TextStyle(
+                                        fontSize: 44,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  if (!isPassed(slot)) ...[
+                                    const SizedBox(height: 10),
+                                    Image.network(
+                                        'https://cdn.norisk.gg/backend-resources/${slot.locationName.toLowerCase().replaceAll(' ', '_')}.png'),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      children: [
                                         NoRiskButton(
-                                          onTap: () => showQr(context),
+                                          onTap: () => openMaps(slot),
                                           color: bgColor,
                                           child: Padding(
                                             padding: const EdgeInsets.all(5),
                                             child: NoRiskText(
-                                                'Show QR Code'.toLowerCase(),
+                                                'Show Location'.toLowerCase(),
                                                 spaceTop: false,
                                                 spaceBottom: false,
                                                 style: TextStyle(
@@ -216,17 +206,37 @@ class GamescomState extends State<Gamescom> {
                                                         .text)),
                                           ),
                                         ),
-                                    ],
-                                  ),
-                              ],
-                            ),
-                            if (isActive(slot))
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: PulsingSquare(
-                                    color: NoRiskClientColors.blue),
+                                        const SizedBox(width: 10),
+                                        if (isActive(slot) &&
+                                            getUserData['uuid'] != null)
+                                          NoRiskButton(
+                                            onTap: () => showQr(context),
+                                            color: bgColor,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(5),
+                                              child: NoRiskText(
+                                                  'Show QR Code'.toLowerCase(),
+                                                  spaceTop: false,
+                                                  spaceBottom: false,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: NoRiskClientColors
+                                                          .text)),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ]
+                                ],
                               ),
-                          ]),
+                              if (isActive(slot))
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: PulsingSquare(
+                                      color: NoRiskClientColors.blue),
+                                ),
+                            ]),
+                          ),
                         ),
                       ),
                     );
@@ -236,19 +246,33 @@ class GamescomState extends State<Gamescom> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 45),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: NoRiskText(
-                  'gamescom',
-                  spaceTop: false,
-                  spaceBottom: false,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    color: NoRiskClientColors.text,
+              child: Stack(
+                children: [
+                  if (getUserData['uuid'] == null)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 7.5),
+                          child: NoRiskBackButton(),
+                        ),
+                      ],
+                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      NoRiskText('gamescom',
+                          spaceTop: false,
+                          spaceBottom: false,
+                          style: const TextStyle(
+                              color: NoRiskClientColors.text,
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold)),
+                    ],
                   ),
-                ),
+                ],
               ),
             ),
           ],

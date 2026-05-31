@@ -138,8 +138,7 @@ class ProfileState extends State<Profile> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             if (!widget.isSettings)
-                              NoRiskBackButton(
-                                  onPressed: () => Navigator.of(context).pop()),
+                              NoRiskBackButton(),
                             if (widget.isSettings) const SizedBox(width: 30),
                             Column(children: [
                               NoRiskText(

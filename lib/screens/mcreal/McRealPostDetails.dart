@@ -194,7 +194,7 @@ class McRealState extends State<PostDetails> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              NoRiskBackButton(onPressed: () => Navigator.of(context).pop())
+                              NoRiskBackButton()
                             ]),
                         Center(
                           child: NoRiskText(

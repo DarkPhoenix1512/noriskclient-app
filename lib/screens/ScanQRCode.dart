@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:noriskclient/config/Colors.dart';
-import 'package:noriskclient/screens/GiveawayResult.dart';
-import 'package:noriskclient/utils/NoRiskApi.dart';
 import 'package:noriskclient/widgets/QRScannerOverlayShape.dart';
 
 class ScanQRCode extends StatefulWidget {

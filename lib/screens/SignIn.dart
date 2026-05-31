@@ -7,6 +7,7 @@ import 'package:noriskclient/config/Colors.dart';
 import 'package:noriskclient/config/Config.dart';
 import 'package:noriskclient/main.dart';
 import 'package:noriskclient/provider/localeProvider.dart';
+import 'package:noriskclient/screens/Gamescom.dart';
 import 'package:noriskclient/utils/NoRiskApi.dart';
 import 'package:noriskclient/widgets/NoRiskContainer.dart';
 import 'package:noriskclient/widgets/NoRiskText.dart';
@@ -52,7 +53,8 @@ class SignInState extends State<SignIn> {
                       : MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.125),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.125),
                     GestureDetector(
                         onLongPress: showDeveloperSignInPopup,
                         child: Image.asset('lib/assets/app/norisk_logo.png',
@@ -92,8 +94,7 @@ class SignInState extends State<SignIn> {
                   GestureDetector(
                     onTap: scanQrCode,
                     child: Padding(
-                      padding:
-                      const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.only(bottom: 10),
                       child: NoRiskContainer(
                         height: 65,
                         padding: const EdgeInsets.all(10),
@@ -103,38 +104,61 @@ class SignInState extends State<SignIn> {
                                 : NoRiskClientColors.blue,
                             borderRadius: BorderRadius.circular(10)),
                         child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: isProcessingResult
-                                ? [
-                                    NoRiskText(
-                                        AppLocalizations.of(context)!
-                                            .signIn_signingIn
-                                            .toLowerCase(),
-                                        spaceTop: false,
-                                        spaceBottom: false,
-                                        style: TextStyle(
-                                            fontSize: 35,
-                                            color: Colors.white.withOpacity(0.5)))
-                                  ]
-                                : [
-                                    NoRiskText(
-                                      AppLocalizations.of(context)!
-                                          .signIn_scanQrCode
-                                          .toLowerCase(),
-                                      spaceTop: false,
-                                      spaceBottom: false,
-                                      style: TextStyle(
-                                          color: isProcessingResult
-                                              ? Colors.white.withOpacity(0.5)
-                                              : Colors.white,
-                                          fontSize: 35,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
-                          ),
+                          child: isProcessingResult
+                              ? NoRiskText(
+                                  AppLocalizations.of(context)!
+                                      .signIn_signingIn
+                                      .toLowerCase(),
+                                  spaceTop: false,
+                                  spaceBottom: false,
+                                  style: TextStyle(
+                                      fontSize: 35,
+                                      color: Colors.white.withOpacity(0.5)))
+                              : NoRiskText(
+                                  AppLocalizations.of(context)!
+                                      .signIn_scanQrCode
+                                      .toLowerCase(),
+                                  spaceTop: false,
+                                  spaceBottom: false,
+                                  style: TextStyle(
+                                      color: isProcessingResult
+                                          ? Colors.white.withOpacity(0.5)
+                                          : Colors.white,
+                                      fontSize: 35,
+                                      fontWeight: FontWeight.w500),
+                                ),
                         ),
+                      ),
+                    ),
+                  ),
+                  // if (DateTime.now().isBefore(DateTime(2026, 8, 30)) &&
+                  //     DateTime.now().isAfter(DateTime(2026, 8, 26)))
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => Gamescom())),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: NoRiskContainer(
+                        height: 65,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: NoRiskClientColors.blue,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                            child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset('lib/assets/widgets/gamescom.png',
+                                height: 25),
+                            const SizedBox(width: 15),
+                            NoRiskText('Gamescom 2026 Infos'.toLowerCase(),
+                                spaceTop: false,
+                                spaceBottom: false,
+                                style: TextStyle(
+                                    fontSize: 35, color: Colors.white)),
+                          ],
+                        )),
                       ),
                     ),
                   ),

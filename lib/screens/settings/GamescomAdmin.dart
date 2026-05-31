@@ -56,9 +56,7 @@ class _GamescomAdminState extends State<GamescomAdmin> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 7.5),
-                      child: NoRiskBackButton(onPressed: () {
-                        Navigator.of(context).pop();
-                      }),
+                      child: NoRiskBackButton(),
                     ),
                   ],
                 ),

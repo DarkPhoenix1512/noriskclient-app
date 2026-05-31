@@ -40,11 +40,7 @@ class _GiveawayResultState extends State<GiveawayResult> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 7.5),
-                      child: NoRiskBackButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
+                      child: NoRiskBackButton(),
                     ),
                   ],
                 ),

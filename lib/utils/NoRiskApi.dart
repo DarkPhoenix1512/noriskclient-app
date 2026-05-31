@@ -147,18 +147,6 @@ class NoRiskApi {
     }
   }
 
-  Future<String?> isAndroidAppReleased() async {
-    final response = await http
-        .get(Uri.parse('https://dl-staging.norisk.gg/android_app_release'));
-
-    if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes))['currentVersion']
-          as String?;
-    } else {
-      return null;
-    }
-  }
-
   Future<List<dynamic>?> getGamescomEvents() async {
     print('https://cdn.norisk.gg/backend-resources/gamescom_events.json');
     final response = await http.get(Uri.parse(
@@ -173,16 +161,12 @@ class NoRiskApi {
     }
   }
 
-  Future<List<dynamic>?> getGamescomAdmins() async {
-    print('https://cdn.norisk.gg/backend-resources/gamescom_admins.json');
-    final response = await http.get(Uri.parse(
-        'https://cdn.norisk.gg/backend-resources/gamescom_admins.json'));
-    if (response.statusCode == 200) {
-      return response.body == 'null'
-          ? null
-          : jsonDecode(utf8.decode(response.bodyBytes));
+  Future<List<dynamic>?> getUserPermissions() async {
+    List? permissions = await _fetchData<List>('core', 'permissions', null);
+    if (permissions == null) {
+      return [];
     } else {
-      return null;
+      return permissions;
     }
   }
 }

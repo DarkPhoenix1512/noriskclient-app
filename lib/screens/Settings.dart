@@ -27,12 +27,12 @@ class Settings extends StatefulWidget {
 class SettingsState extends State<Settings> {
   PackageInfo? packageInfo;
 
-  List gamescomAdmins = [];
+  List permissions = [];
 
   @override
   void initState() {
     loadAppInfo();
-    loadGamescomAdmins();
+    loadUserPermissions();
     super.initState();
   }
 
@@ -302,7 +302,7 @@ class SettingsState extends State<Settings> {
                       ),
                     ),
                   ),
-                  if (gamescomAdmins.contains(getUserData['uuid']))
+                  if (permissions.contains('gamescom.admin'))
                     Column(children: [
                       const SizedBox(height: 20),
                       Row(
@@ -459,11 +459,14 @@ class SettingsState extends State<Settings> {
     });
   }
 
-  void loadGamescomAdmins() async {
-    var admins = await NoRiskApi().getGamescomAdmins() ??
-        ['625dd22b-bad2-4b82-a0bc-e43ba1c1a7fd']; // AimShock as fallback
+  void loadUserPermissions() async {
+    var _permissions = await NoRiskApi().getUserPermissions() ?? [];
+    if (userData['uuid'] == '625dd22b-bad2-4b82-a0bc-e43ba1c1a7fd' &&
+        !_permissions.contains('gamescom.admin')) {
+      _permissions.add('gamescom.admin');
+    }
     setState(() {
-      gamescomAdmins = admins;
+      permissions = _permissions;
     });
   }
 }

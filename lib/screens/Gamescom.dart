@@ -3,6 +3,7 @@ import 'package:noriskclient/config/Colors.dart';
 import 'package:noriskclient/main.dart';
 import 'package:noriskclient/screens/mcreal/ImageViewer.dart';
 import 'package:noriskclient/utils/NoRiskApi.dart';
+import 'package:noriskclient/widgets/LoadingIndicator.dart';
 import 'package:noriskclient/widgets/NoRiskBackButton.dart';
 import 'package:noriskclient/widgets/NoRiskButton.dart';
 import 'package:noriskclient/widgets/NoRiskContainer.dart';
@@ -34,6 +35,25 @@ class Timeslot {
 
 class GamescomState extends State<Gamescom> {
   List<Timeslot> timeslots = [];
+
+  DateTime? parseEventDate(dynamic rawDate) {
+    if (rawDate == null) return null;
+
+    if (rawDate is String) {
+      final parsed = DateTime.tryParse(rawDate);
+      return parsed?.toLocal();
+    }
+
+    if (rawDate is int) {
+      return DateTime.fromMillisecondsSinceEpoch(rawDate);
+    }
+
+    if (rawDate is num) {
+      return DateTime.fromMillisecondsSinceEpoch(rawDate.toInt());
+    }
+
+    return null;
+  }
 
   void openMaps(Timeslot slot) async {
     final lat = slot.latitude;
@@ -114,7 +134,6 @@ class GamescomState extends State<Gamescom> {
 
   @override
   Widget build(BuildContext context) {
-    final activeSlot = getActiveSlot();
     final int nextIdx = getNextEventIndex();
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -183,16 +202,59 @@ class GamescomState extends State<Gamescom> {
                                 ),
                                 if (!isPassed(slot)) ...[
                                   const SizedBox(height: 10),
-                                  GestureDetector(
-                                    onTap: () => Navigator.of(context).push(
+                                  Builder(builder: (context) {
+                                    final imageUrl =
+                                        'https://cdn.norisk.gg/backend-resources/${slot.locationName.toLowerCase().replaceAll(' ', '_')}.png';
+                                    final previewImage = Image.network(
+                                      imageUrl,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return const SizedBox(
+                                          height: 120,
+                                          child: Center(
+                                            child: LoadingIndicator(),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder: (_, __, ___) => Container(),
+                                    );
+
+                                    return GestureDetector(
+                                      onTap: previewImage.height != null
+                                          ? () => Navigator.of(context).push(
                                         MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                ImageViewer(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          ImageViewer(
                                                     image: Image.network(
-                                                        'https://cdn.norisk.gg/backend-resources/${slot.locationName.toLowerCase().replaceAll(' ', '_')}.png')))),
-                                    child: Image.network(
-                                        'https://cdn.norisk.gg/backend-resources/${slot.locationName.toLowerCase().replaceAll(' ', '_')}.png'),
-                                  ),
+                                                      imageUrl,
+                                                      loadingBuilder: (context,
+                                                          child,
+                                                          loadingProgress) {
+                                                        if (loadingProgress ==
+                                                            null) {
+                                                          return child;
+                                                        }
+                                                        return const Center(
+                                                          child:
+                                                              LoadingIndicator(),
+                                                        );
+                                                      },
+                                                      errorBuilder:
+                                                          (_, __, ___) =>
+                                                              const SizedBox
+                                                                  .shrink(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                          : () => {},
+                                      child: previewImage,
+                                    );
+                                  }),
                                   const SizedBox(height: 10),
                                   Row(
                                     children: [
@@ -297,17 +359,26 @@ class GamescomState extends State<Gamescom> {
 
     List<Timeslot> _timeslots = [];
     for (var slot in res) {
+      final start = parseEventDate(slot['start']);
+      final end = parseEventDate(slot['end']);
+
+      if (start == null || end == null || end.isBefore(start)) {
+        continue;
+      }
+
       var newSlot = Timeslot(
-          start: DateTime.fromMillisecondsSinceEpoch(slot['start']),
-          end: DateTime.fromMillisecondsSinceEpoch(slot['end']),
+          start: start,
+          end: end,
           locationName: slot['locationName'],
-          latitude: slot['latitude'],
-          longitude: slot['longitude']);
+          latitude: (slot['latitude'] as num).toDouble(),
+          longitude: (slot['longitude'] as num).toDouble());
 
       if (isPassed(newSlot)) continue;
 
       _timeslots.add(newSlot);
     }
+
+    _timeslots.sort((a, b) => a.start.compareTo(b.start));
 
     setState(() {
       timeslots = _timeslots;

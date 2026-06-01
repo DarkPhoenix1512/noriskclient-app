@@ -252,7 +252,7 @@ class GamescomState extends State<Gamescom> {
               padding: const EdgeInsets.only(top: 45),
               child: Stack(
                 children: [
-                  if (getUserData['uuid'] == null)
+                  if (userData['uuid'] == '')
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,

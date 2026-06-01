@@ -207,61 +207,78 @@ class SignInState extends State<SignIn> {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       MobileScannerController controller = MobileScannerController();
+      bool scannerClosed = false;
+
+      Future<void> closeScanner() async {
+        if (scannerClosed) return;
+        scannerClosed = true;
+        try {
+          await controller.stop();
+        } catch (_) {}
+        try {
+          await controller.dispose();
+        } catch (_) {}
+      }
+
       return Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: NoRiskClientColors.background,
-        body: Stack(
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: MobileScanner(
-                fit: BoxFit.fitHeight,
-                controller: controller,
-                onDetect: (BarcodeCapture result) {
-                  handleQrCodeResult(
-                      controller, result.barcodes[0].rawValue ?? '');
-                },
+        body: PopScope(
+          onPopInvokedWithResult: (x, y) async {
+            await closeScanner();
+          },
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: MobileScanner(
+                  fit: BoxFit.fitHeight,
+                  controller: controller,
+                  onDetect: (BarcodeCapture result) {
+                    handleQrCodeResult(
+                        controller, result.barcodes[0].rawValue ?? '');
+                  },
+                ),
               ),
-            ),
-            Positioned.fill(
-              child: Container(
-                decoration: ShapeDecoration(
-                  shape: QrScannerOverlayShape(
-                    borderColor: NoRiskClientColors.light,
-                    borderRadius: 10,
-                    borderLength: 15,
-                    borderWidth: 7.5,
-                    cutOutSize: MediaQuery.of(context).size.width / 1.5,
+              Positioned.fill(
+                child: Container(
+                  decoration: ShapeDecoration(
+                    shape: QrScannerOverlayShape(
+                      borderColor: NoRiskClientColors.light,
+                      borderRadius: 10,
+                      borderLength: 15,
+                      borderWidth: 7.5,
+                      cutOutSize: MediaQuery.of(context).size.width / 1.5,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 10, top: 40),
-              child: Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                      onPressed: () {
-                        controller.stop();
-                        controller.dispose();
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(Icons.close_rounded,
-                          color: Colors.white, size: 30))),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 50),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: IconButton(
-                    onPressed: () async {
-                      await controller.toggleTorch();
-                    },
-                    icon: const Icon(Icons.flash_on_rounded,
-                        color: Colors.white, size: 50)),
+              Padding(
+                padding: const EdgeInsets.only(right: 10, top: 40),
+                child: Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                        onPressed: () async {
+                          await closeScanner();
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.close_rounded,
+                            color: Colors.white, size: 30))),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(bottom: 50),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: IconButton(
+                      onPressed: () async {
+                        await controller.toggleTorch();
+                      },
+                      icon: const Icon(Icons.flash_on_rounded,
+                          color: Colors.white, size: 50)),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }));

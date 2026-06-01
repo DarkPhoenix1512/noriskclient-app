@@ -15,6 +15,18 @@ class ScanQRCode extends StatefulWidget {
 class _ScanQRCodeState extends State<ScanQRCode> {
   MobileScannerController controller = MobileScannerController();
   int? lastRedeem;
+  bool _scannerClosed = false;
+
+  Future<void> _closeScanner() async {
+    if (_scannerClosed) return;
+    _scannerClosed = true;
+    try {
+      await controller.stop();
+    } catch (_) {}
+    try {
+      await controller.dispose();
+    } catch (_) {}
+  }
 
   @override
   void initState() {
@@ -25,8 +37,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
 
   @override
   void dispose() {
-    controller.stop();
-    controller.dispose();
+    _closeScanner();
     super.dispose();
   }
 
@@ -67,9 +78,8 @@ class _ScanQRCodeState extends State<ScanQRCode> {
                 alignment: Alignment.topRight,
                 child: IconButton(
                     onPressed: () {
-                      controller.stop();
-                      controller.dispose();
-                      Navigator.of(context).pop();
+                      _closeScanner();
+                      if (mounted) Navigator.of(context).pop();
                     },
                     icon: const Icon(Icons.close_rounded,
                         color: Colors.white, size: 30))),
@@ -98,8 +108,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
     if (code.contains("NRC-GAMESCOM-2026-")) {
       String targetUsername = code.replaceFirst('NRC-GAMESCOM-2026-', '');
 
-      controller.stop();
-      controller.dispose();
+      await _closeScanner();
 
       if (lastRedeem! + 1000 >= DateTime.now().millisecondsSinceEpoch) {
         return;

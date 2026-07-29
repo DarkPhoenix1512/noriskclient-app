@@ -152,162 +152,177 @@ class GamescomState extends State<Gamescom> {
               ),
               child: RefreshIndicator(
                 onRefresh: () async => loadEvents(),
-                child: ListView.separated(
-                  itemCount: timeslots.where((slot) => !isPassed(slot)).length,
-                  separatorBuilder: (_, __) => SizedBox(height: 20),
-                  itemBuilder: (context, idx) {
-                    final slot = timeslots[idx];
-                    final bool isNext = idx == nextIdx;
-                    final Color bgColor =
-                        isNext ? NoRiskClientColors.blue : Colors.white;
-                    return Padding(
-                      padding: EdgeInsets.only(
-                          bottom: idx == timeslots.length - 1 ? 50 : 0),
-                      child: NoRiskContainer(
-                        color: bgColor,
-                        child: Padding(
-                          padding: const EdgeInsets.all(18),
-                          child: Stack(children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                NoRiskText(
-                                  slot.locationName.toLowerCase(),
-                                  spaceTop: false,
-                                  spaceBottom: false,
-                                  style: TextStyle(
-                                      fontSize: 26,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 10),
-                                NoRiskText(
-                                  '${slot.start.day.toString().padLeft(2, '0')}.${slot.start.month.toString().padLeft(2, '0')}.${slot.start.year}',
-                                  spaceTop: false,
-                                  spaceBottom: false,
-                                  style: TextStyle(
-                                      fontSize: 28,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                NoRiskText(
-                                  '${slot.start.hour.toString().padLeft(2, '0')}:${slot.start.minute.toString().padLeft(2, '0')} - '
-                                  '${slot.end.hour.toString().padLeft(2, '0')}:${slot.end.minute.toString().padLeft(2, '0')}',
-                                  spaceTop: false,
-                                  spaceBottom: false,
-                                  style: TextStyle(
-                                      fontSize: 44,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                if (!isPassed(slot)) ...[
-                                  const SizedBox(height: 10),
-                                  Builder(builder: (context) {
-                                    final imageUrl =
-                                        'https://cdn.norisk.gg/backend-resources/${slot.locationName.toLowerCase().replaceAll(' ', '_')}.png';
-                                    final previewImage = Image.network(
-                                      imageUrl,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return child;
-                                        }
-                                        return const SizedBox(
-                                          height: 120,
-                                          child: Center(
-                                            child: LoadingIndicator(),
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder: (_, __, ___) => Container(),
-                                    );
-
-                                    return GestureDetector(
-                                      onTap: previewImage.height != null
-                                          ? () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          ImageViewer(
-                                                    image: Image.network(
-                                                      imageUrl,
-                                                      loadingBuilder: (context,
-                                                          child,
-                                                          loadingProgress) {
-                                                        if (loadingProgress ==
-                                                            null) {
-                                                          return child;
-                                                        }
-                                                        return const Center(
-                                                          child:
-                                                              LoadingIndicator(),
-                                                        );
-                                                      },
-                                                      errorBuilder:
-                                                          (_, __, ___) =>
-                                                              const SizedBox
-                                                                  .shrink(),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                          : () => {},
-                                      child: previewImage,
-                                    );
-                                  }),
-                                  const SizedBox(height: 10),
-                                  Row(
+                child: timeslots.isEmpty
+                    ? Center(
+                        child: NoRiskText("comming soon!",
+                            style: TextStyle(
+                                fontSize: 45, color: NoRiskClientColors.text)))
+                    : ListView.separated(
+                        itemCount:
+                            timeslots.where((slot) => !isPassed(slot)).length,
+                        separatorBuilder: (_, __) => SizedBox(height: 20),
+                        itemBuilder: (context, idx) {
+                          final slot = timeslots[idx];
+                          final bool isNext = idx == nextIdx;
+                          final Color bgColor =
+                              isNext ? NoRiskClientColors.blue : Colors.white;
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                bottom: idx == timeslots.length - 1 ? 50 : 0),
+                            child: NoRiskContainer(
+                              color: bgColor,
+                              child: Padding(
+                                padding: const EdgeInsets.all(18),
+                                child: Stack(children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      NoRiskButton(
-                                        onTap: () => openMaps(slot),
-                                        color: bgColor,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5),
-                                          child: NoRiskText(
-                                              'Show Location'.toLowerCase(),
-                                              spaceTop: false,
-                                              spaceBottom: false,
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  color:
-                                                      NoRiskClientColors.text)),
-                                        ),
+                                      NoRiskText(
+                                        slot.locationName.toLowerCase(),
+                                        spaceTop: false,
+                                        spaceBottom: false,
+                                        style: TextStyle(
+                                            fontSize: 26,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      const SizedBox(width: 10),
-                                      if (isActive(slot) &&
-                                          getUserData['uuid'] != null)
-                                        NoRiskButton(
-                                          onTap: () => showQr(context),
-                                          color: bgColor,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5),
-                                            child: NoRiskText(
-                                                'Show QR Code'.toLowerCase(),
-                                                spaceTop: false,
-                                                spaceBottom: false,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: NoRiskClientColors
-                                                        .text)),
-                                          ),
+                                      SizedBox(height: 10),
+                                      NoRiskText(
+                                        '${slot.start.day.toString().padLeft(2, '0')}.${slot.start.month.toString().padLeft(2, '0')}.${slot.start.year}',
+                                        spaceTop: false,
+                                        spaceBottom: false,
+                                        style: TextStyle(
+                                            fontSize: 28,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      NoRiskText(
+                                        '${slot.start.hour.toString().padLeft(2, '0')}:${slot.start.minute.toString().padLeft(2, '0')} - '
+                                        '${slot.end.hour.toString().padLeft(2, '0')}:${slot.end.minute.toString().padLeft(2, '0')}',
+                                        spaceTop: false,
+                                        spaceBottom: false,
+                                        style: TextStyle(
+                                            fontSize: 44,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      if (!isPassed(slot)) ...[
+                                        const SizedBox(height: 10),
+                                        Builder(builder: (context) {
+                                          final imageUrl =
+                                              'https://cdn.norisk.gg/backend-resources/${slot.locationName.toLowerCase().replaceAll(' ', '_')}.png';
+                                          final previewImage = Image.network(
+                                            imageUrl,
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return const SizedBox(
+                                                height: 120,
+                                                child: Center(
+                                                  child: LoadingIndicator(),
+                                                ),
+                                              );
+                                            },
+                                            errorBuilder: (_, __, ___) =>
+                                                Container(),
+                                          );
+
+                                          return GestureDetector(
+                                            onTap: previewImage.height != null
+                                                ? () =>
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            ImageViewer(
+                                                          image: Image.network(
+                                                            imageUrl,
+                                                            loadingBuilder:
+                                                                (context, child,
+                                                                    loadingProgress) {
+                                                              if (loadingProgress ==
+                                                                  null) {
+                                                                return child;
+                                                              }
+                                                              return const Center(
+                                                                child:
+                                                                    LoadingIndicator(),
+                                                              );
+                                                            },
+                                                            errorBuilder: (_,
+                                                                    __, ___) =>
+                                                                const SizedBox
+                                                                    .shrink(),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                : () => {},
+                                            child: previewImage,
+                                          );
+                                        }),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            NoRiskButton(
+                                              onTap: () => openMaps(slot),
+                                              color: bgColor,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: NoRiskText(
+                                                    'Show Location'
+                                                        .toLowerCase(),
+                                                    spaceTop: false,
+                                                    spaceBottom: false,
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color:
+                                                            NoRiskClientColors
+                                                                .text)),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            if (isActive(slot) &&
+                                                getUserData['uuid'] != null)
+                                              NoRiskButton(
+                                                onTap: () => showQr(context),
+                                                color: bgColor,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5),
+                                                  child: NoRiskText(
+                                                      'Show QR Code'
+                                                          .toLowerCase(),
+                                                      spaceTop: false,
+                                                      spaceBottom: false,
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color:
+                                                              NoRiskClientColors
+                                                                  .text)),
+                                                ),
+                                              ),
+                                          ],
                                         ),
+                                      ]
                                     ],
                                   ),
-                                ]
-                              ],
-                            ),
-                            if (isActive(slot))
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: PulsingSquare(
-                                    color: NoRiskClientColors.blue),
+                                  if (isActive(slot))
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: PulsingSquare(
+                                          color: NoRiskClientColors.blue),
+                                    ),
+                                ]),
                               ),
-                          ]),
-                        ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ),
             Padding(

@@ -139,7 +139,8 @@ class NoRiskApi {
     if (response.statusCode == 200) {
       return jsonDecode(utf8.decode(response.bodyBytes))
           as Map<String, dynamic>;
-    } else if (response.statusCode == 401) {
+    } else if (response.statusCode == 401 &&
+        !utf8.decode(response.bodyBytes).contains("permission")) {
       getUpdateStream.sink.add(['signOut']);
       return null;
     } else {

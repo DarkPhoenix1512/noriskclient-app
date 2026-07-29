@@ -30,7 +30,9 @@ class _GamescomAdminState extends State<GamescomAdmin> {
     var res = await NoRiskApi().redeemGamescom(username);
     if (res == null || res['error'] != null) {
       Fluttertoast.showToast(
-          msg: res?['error'] ?? 'Failed to redeem for $username!', backgroundColor: Colors.red);
+          msg: res?['error'] ?? 'Failed to redeem for $username!',
+          backgroundColor: Colors.red);
+      print("Failed to redeem for $username -> $res");
       return;
     } else {
       Fluttertoast.showToast(

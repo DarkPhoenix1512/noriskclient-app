@@ -113,10 +113,11 @@ class _ScanQRCodeState extends State<ScanQRCode> {
       if (lastRedeem! + 1000 >= DateTime.now().millisecondsSinceEpoch) {
         return;
       }
+      lastRedeem = DateTime.now().millisecondsSinceEpoch;
+
+      Navigator.pop(context);
 
       widget.redeem(targetUsername);
-
-      lastRedeem = DateTime.now().millisecondsSinceEpoch;
     }
   }
 }

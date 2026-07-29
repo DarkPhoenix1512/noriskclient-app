@@ -70,8 +70,8 @@ class GamescomState extends State<Gamescom> {
   }
 
   void showQr(BuildContext context) {
-    final username = cache['usernames']?[getUserData['uuid']];
-    if (!username) return;
+    final username = getCache['usernames']?[getUserData['uuid']];
+    if (username == null) return;
     showDialog(
       context: context,
       barrierColor: Color.fromARGB(220, 0, 0, 0),
@@ -129,6 +129,13 @@ class GamescomState extends State<Gamescom> {
   @override
   void initState() {
     loadEvents();
+    getUpdateStream.sink.add([
+      'loadUsername',
+      getUserData['uuid'],
+      () => setState(() {
+        cache = getCache;
+      })
+    ]);
     super.initState();
   }
 

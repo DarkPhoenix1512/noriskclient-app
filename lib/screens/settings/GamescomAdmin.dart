@@ -17,7 +17,7 @@ class GamescomAdmin extends StatefulWidget {
 
 class _GamescomAdminState extends State<GamescomAdmin> {
   String lastResponseMsg = "";
-  String? scannedUsername;
+  String enteredUsername = '';
   final TextEditingController _controller = TextEditingController();
 
   void _scanQr() async {
@@ -30,16 +30,28 @@ class _GamescomAdminState extends State<GamescomAdmin> {
   void _redeem(String username) async {
     var res = await NoRiskApi().redeemGamescom(username);
     if (res == null || res['error'] != null) {
-      lastResponseMsg = res?['error'] ?? 'Failed to redeem for $username!';
-      Fluttertoast.showToast(
-          msg: lastResponseMsg,
-          backgroundColor: Colors.red);
+      setState(() {
+        lastResponseMsg = res?['error'] ?? 'Failed to redeem for $username!';
+      });
+      Fluttertoast.showToast(msg: lastResponseMsg, backgroundColor: Colors.red);
       return;
     } else {
-      lastResponseMsg = 'Redeemed for $username!';
+      setState(() {
+        lastResponseMsg = 'Redeemed for $username!';
+      });
       Fluttertoast.showToast(
           msg: lastResponseMsg, backgroundColor: Colors.green);
     }
+  }
+
+  @override
+  void initState() {
+    _controller.addListener(() {
+      setState(() {
+        enteredUsername = _controller.text;
+      });
+    });
+    super.initState();
   }
 
   @override
@@ -111,9 +123,9 @@ class _GamescomAdminState extends State<GamescomAdmin> {
               ),
               SizedBox(height: 10),
               NoRiskButton(
-                onTap: _controller.text.isEmpty
+                onTap: enteredUsername.isEmpty
                     ? () {}
-                    : () => _redeem(_controller.text),
+                    : () => _redeem(enteredUsername),
                 child: NoRiskText(
                   'redeem manually',
                   style:

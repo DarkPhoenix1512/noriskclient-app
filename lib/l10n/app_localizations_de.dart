@@ -9,6 +9,27 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get chat_chat_empty => 'Leerer Chat';
+
+  @override
+  String get chat_delete_message_cancel => 'Abbrechen';
+
+  @override
+  String get chat_delete_message_content => 'Bist du sicher, dass du diese Nachricht löschen willst?';
+
+  @override
+  String get chat_delete_message_delete => 'Löschen';
+
+  @override
+  String get chat_delete_message_title => 'Nachricht Löschen';
+
+  @override
+  String get chat_message_deleted => 'Diese Nachricht wurde gelöscht.';
+
+  @override
+  String get gamescom_no_infos => 'Aktuell sind keine Infos verfügbar.';
+
+  @override
   String get mcRealComment_reply => 'Antwort';
 
   @override
@@ -60,6 +81,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mcReal_ago => 'zu spät';
 
   @override
+  String get mcReal_blocked_noBlockedPlayers => 'Du hast keine Spieler blockiert.';
+
+  @override
   String get mcReal_comment => 'Kommentieren';
 
   @override
@@ -84,9 +108,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mcReal_friendsOnly => 'Freunde';
 
   @override
-  String get mcReal_partnerPosts => 'Partner';
-
-  @override
   String get mcReal_justNow => 'Jetzt';
 
   @override
@@ -97,6 +118,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get mcReal_noPostsPlain => 'Keine Posts verfügbar :(';
+
+  @override
+  String get mcReal_partnerPosts => 'Partner';
 
   @override
   String get mcReal_pinPostPopupContent => 'Bist du dir sicher, dass du dein heutiges McReal anpinnen möchtest?';
@@ -114,13 +138,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mcReal_popup_ok => 'Ok';
 
   @override
-  String get mcReal_popup_yes => 'Ja';
-
-  @override
   String get mcReal_popup_pin => 'Anpinnen!';
 
   @override
   String get mcReal_popup_unpin => 'Ja';
+
+  @override
+  String get mcReal_popup_yes => 'Ja';
+
+  @override
+  String get mcReal_profile_blockUserPopupContent => 'Möchtest du diesen Spieler blockieren?';
+
+  @override
+  String get mcReal_profile_blockUserPopupTitle => 'Bist du sicher?';
+
+  @override
+  String get mcReal_profile_blockedPlayer => 'Du hast diesen Spieler blockiert.';
+
+  @override
+  String get mcReal_profile_unblockUserPopupContent => 'Möchtest du diesen Spieler wirklich entsperren?';
+
+  @override
+  String get mcReal_profile_unblockUserPopupTitle => 'Bist du sicher?';
 
   @override
   String get mcReal_removedPost => 'Dein McReal wurde entfernt.\nTippe hier für mehr Infos.';
@@ -153,37 +192,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mcReal_yourMcReal => 'Dein McReal';
 
   @override
+  String get navbar_you => 'Du';
+
+  @override
   String get postDetails_title => 'Post Details';
 
   @override
   String get postDetails_yourMcReal => 'Dein McReal';
 
   @override
-  String get settings_signOut => 'Abmelden';
-
-  @override
-  String get settings_title => 'Einstellungen';
-
-  @override
-  String get signIn_eula => 'Durch die Anmeldung erklärst du dich mit den Nutzungsbedingungen und Datenschutzrichtlinien einverstanden.';
-
-  @override
-  String get signIn_explanation => 'Um dich anzumelden, scanne einfach den QR-Code aus dem NoRisk Client Launcher unter der Menü Option \"Social Accounts\" neben dem account manager.';
-
-  @override
-  String get signIn_scanQrCode => 'QR Code Scannen';
-
-  @override
-  String get signIn_signIn => 'Anmelden';
-
-  @override
-  String get signIn_signingIn => 'Wird angemeldet...';
-
-  @override
-  String get profile_yourProfile => 'Dein Profil';
-
-  @override
-  String get profile_usersProfile => '\'s Profil';
+  String get profile_noPinnedPosts => ' hat keine angepinnten Posts :/';
 
   @override
   String get profile_stats_firstJoin => 'First Join';
@@ -201,68 +219,53 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profile_stats_playtime => 'Playtime';
 
   @override
-  String get profile_noPinnedPosts => ' hat keine angepinnten Posts :/';
+  String get profile_usersProfile => '\'s Profil';
 
   @override
-  String get settings_language => 'Sprache';
+  String get profile_yourProfile => 'Dein Profil';
 
   @override
   String get settings_blockedPlayers => 'Blockierte Spieler';
 
   @override
-  String get settings_legal => 'Rechtliches';
+  String get settings_imprint => 'Impressum';
 
   @override
-  String get settings_tos => 'Nutzungsbedingungen';
+  String get settings_language => 'Sprache';
+
+  @override
+  String get settings_legal => 'Rechtliches';
 
   @override
   String get settings_privacyPolicy => 'Datenschutz';
 
   @override
-  String get settings_imprint => 'Impressum';
+  String get settings_signOut => 'Abmelden';
 
   @override
   String get settings_support => 'Support';
 
   @override
-  String get mcReal_profile_blockUserPopupTitle => 'Bist du sicher?';
+  String get settings_title => 'Einstellungen';
 
   @override
-  String get mcReal_profile_blockUserPopupContent => 'Möchtest du diesen Spieler blockieren?';
+  String get settings_tos => 'Nutzungsbedingungen';
 
   @override
-  String get mcReal_profile_unblockUserPopupTitle => 'Bist du sicher?';
+  String get signIn_eula => 'Durch die Anmeldung erklärst du dich mit den Nutzungsbedingungen und Datenschutzrichtlinien einverstanden.';
 
   @override
-  String get mcReal_profile_unblockUserPopupContent => 'Möchtest du diesen Spieler wirklich entsperren?';
+  String get signIn_howLoginWorks => 'Wie der funktioniert Login';
 
   @override
-  String get mcReal_profile_blockedPlayer => 'Du hast diesen Spieler blockiert.';
+  String get signIn_howLoginWorksInfo => 'Schaue dir diesen kurzen Guide an und scanne anschließend den QR Code';
 
   @override
-  String get mcReal_blocked_noBlockedPlayers => 'Du hast keine Spieler blockiert.';
+  String get signIn_scanQrCode => 'QR Code Scannen';
 
   @override
-  String get chat_delete_message_title => 'Nachricht Löschen';
+  String get signIn_signIn => 'Anmelden';
 
   @override
-  String get chat_delete_message_content => 'Bist du sicher, dass du diese Nachricht löschen willst?';
-
-  @override
-  String get chat_delete_message_cancel => 'Abbrechen';
-
-  @override
-  String get chat_delete_message_delete => 'Löschen';
-
-  @override
-  String get chat_message_deleted => 'Diese Nachricht wurde gelöscht.';
-
-  @override
-  String get chat_chat_empty => 'Leerer Chat';
-
-  @override
-  String get navbar_you => 'Du';
-
-  @override
-  String get gamescom_no_infos => 'Aktuell sind keine Infos verfügbar.';
+  String get signIn_signingIn => 'Wird angemeldet...';
 }

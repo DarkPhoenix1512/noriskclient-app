@@ -9,6 +9,7 @@ import 'package:noriskclient/main.dart';
 import 'package:noriskclient/provider/localeProvider.dart';
 import 'package:noriskclient/screens/Gamescom.dart';
 import 'package:noriskclient/utils/NoRiskApi.dart';
+import 'package:noriskclient/widgets/NoRiskBackButton.dart';
 import 'package:noriskclient/widgets/NoRiskContainer.dart';
 import 'package:noriskclient/widgets/NoRiskText.dart';
 import 'package:noriskclient/widgets/QRScannerOverlayShape.dart';
@@ -70,19 +71,6 @@ class SignInState extends State<SignIn> {
                 Column(children: [
                   SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                   NoRiskText(
-                    AppLocalizations.of(context)!
-                        .signIn_explanation
-                        .toLowerCase(),
-                    spaceTop: false,
-                    spaceBottom: false,
-                    style: const TextStyle(
-                        height: 0.85,
-                        fontSize: 17.5,
-                        color: NoRiskClientColors.textLight),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  NoRiskText(
                     AppLocalizations.of(context)!.signIn_eula.toLowerCase(),
                     spaceTop: false,
                     spaceBottom: false,
@@ -92,7 +80,7 @@ class SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 10),
                   GestureDetector(
-                    onTap: scanQrCode,
+                    onTap: openQrLoginIntro,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: NoRiskContainer(
@@ -116,7 +104,7 @@ class SignInState extends State<SignIn> {
                                       color: Colors.white.withOpacity(0.5)))
                               : NoRiskText(
                                   AppLocalizations.of(context)!
-                                      .signIn_scanQrCode
+                                      .signIn_signIn
                                       .toLowerCase(),
                                   spaceTop: false,
                                   spaceBottom: false,
@@ -131,8 +119,8 @@ class SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
-                  // if (DateTime.now().isBefore(DateTime(2026, 8, 30)) &&
-                  //     DateTime.now().isAfter(DateTime(2026, 8, 26)))
+                  if (DateTime.now().isBefore(DateTime(2026, 8, 31)) &&
+                      DateTime.now().isAfter(DateTime(2026, 8, 26)))
                   GestureDetector(
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => Gamescom())),
@@ -201,6 +189,17 @@ class SignInState extends State<SignIn> {
             ),
           ),
         ));
+  }
+
+  void openQrLoginIntro() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (BuildContext context) => QrLoginIntroPage(
+        onProceed: () {
+          Navigator.of(context).pop();
+          scanQrCode();
+        },
+      ),
+    ));
   }
 
   void scanQrCode() {
@@ -390,5 +389,115 @@ class SignInState extends State<SignIn> {
     }
 
     updateStream.sink.add(['signIn', userData]);
+  }
+}
+
+class QrLoginIntroPage extends StatelessWidget {
+  final VoidCallback onProceed;
+
+  const QrLoginIntroPage({super.key, required this.onProceed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: NoRiskClientColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            children: [
+              Align(alignment: Alignment.topLeft, child: NoRiskBackButton()),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    NoRiskText(
+                      AppLocalizations.of(context)!
+                          .signIn_howLoginWorks
+                          .toLowerCase(),
+                      spaceTop: false,
+                      spaceBottom: false,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: NoRiskClientColors.text,
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    NoRiskText(
+                      AppLocalizations.of(context)!
+                          .signIn_howLoginWorksInfo
+                          .toLowerCase(),
+                      spaceTop: false,
+                      spaceBottom: false,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: NoRiskClientColors.textLight,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        'lib/assets/app/nrc_app_login.gif',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          height: 220,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white12,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: NoRiskText(
+                              'open the 🔗 icon in the noriskclient launcher and show the mobile app qr-code. for this to work you will have to have played the client at least once!',
+                              spaceTop: false,
+                              spaceBottom: false,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: NoRiskClientColors.textLight,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: onProceed,
+                child: NoRiskContainer(
+                  height: 65,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: NoRiskClientColors.blue,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: NoRiskText(
+                      AppLocalizations.of(context)!
+                          .signIn_scanQrCode
+                          .toLowerCase(),
+                      spaceTop: false,
+                      spaceBottom: false,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

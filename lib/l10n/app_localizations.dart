@@ -95,6 +95,48 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
+  /// No description provided for @chat_chat_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty Chat'**
+  String get chat_chat_empty;
+
+  /// No description provided for @chat_delete_message_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get chat_delete_message_cancel;
+
+  /// No description provided for @chat_delete_message_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this message?'**
+  String get chat_delete_message_content;
+
+  /// No description provided for @chat_delete_message_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chat_delete_message_delete;
+
+  /// No description provided for @chat_delete_message_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Message'**
+  String get chat_delete_message_title;
+
+  /// No description provided for @chat_message_deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'This message was deleted.'**
+  String get chat_message_deleted;
+
+  /// No description provided for @gamescom_no_infos.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no infos available at the moment.'**
+  String get gamescom_no_infos;
+
   /// No description provided for @mcRealComment_reply.
   ///
   /// In en, this message translates to:
@@ -197,6 +239,12 @@ abstract class AppLocalizations {
   /// **'late'**
   String get mcReal_ago;
 
+  /// No description provided for @mcReal_blocked_noBlockedPlayers.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any blocked players.'**
+  String get mcReal_blocked_noBlockedPlayers;
+
   /// No description provided for @mcReal_comment.
   ///
   /// In en, this message translates to:
@@ -245,12 +293,6 @@ abstract class AppLocalizations {
   /// **'Friends'**
   String get mcReal_friendsOnly;
 
-  /// No description provided for @mcReal_partnerPosts.
-  ///
-  /// In en, this message translates to:
-  /// **'Partners'**
-  String get mcReal_partnerPosts;
-
   /// No description provided for @mcReal_justNow.
   ///
   /// In en, this message translates to:
@@ -274,6 +316,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No posts available :('**
   String get mcReal_noPostsPlain;
+
+  /// No description provided for @mcReal_partnerPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Partners'**
+  String get mcReal_partnerPosts;
 
   /// No description provided for @mcReal_pinPostPopupContent.
   ///
@@ -305,12 +353,6 @@ abstract class AppLocalizations {
   /// **'Ok'**
   String get mcReal_popup_ok;
 
-  /// No description provided for @mcReal_popup_yes.
-  ///
-  /// In en, this message translates to:
-  /// **'Yes'**
-  String get mcReal_popup_yes;
-
   /// No description provided for @mcReal_popup_pin.
   ///
   /// In en, this message translates to:
@@ -322,6 +364,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unpin'**
   String get mcReal_popup_unpin;
+
+  /// No description provided for @mcReal_popup_yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get mcReal_popup_yes;
+
+  /// No description provided for @mcReal_profile_blockUserPopupContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to block this player?'**
+  String get mcReal_profile_blockUserPopupContent;
+
+  /// No description provided for @mcReal_profile_blockUserPopupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get mcReal_profile_blockUserPopupTitle;
+
+  /// No description provided for @mcReal_profile_blockedPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'You have blocked this player.'**
+  String get mcReal_profile_blockedPlayer;
+
+  /// No description provided for @mcReal_profile_unblockUserPopupContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to unblock this player?'**
+  String get mcReal_profile_unblockUserPopupContent;
+
+  /// No description provided for @mcReal_profile_unblockUserPopupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get mcReal_profile_unblockUserPopupTitle;
 
   /// No description provided for @mcReal_removedPost.
   ///
@@ -383,6 +461,12 @@ abstract class AppLocalizations {
   /// **'Your McReal'**
   String get mcReal_yourMcReal;
 
+  /// No description provided for @navbar_you.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get navbar_you;
+
   /// No description provided for @postDetails_title.
   ///
   /// In en, this message translates to:
@@ -395,59 +479,11 @@ abstract class AppLocalizations {
   /// **'Your McReal'**
   String get postDetails_yourMcReal;
 
-  /// No description provided for @settings_signOut.
+  /// No description provided for @profile_noPinnedPosts.
   ///
   /// In en, this message translates to:
-  /// **'Sign Out'**
-  String get settings_signOut;
-
-  /// No description provided for @settings_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
-  String get settings_title;
-
-  /// No description provided for @signIn_eula.
-  ///
-  /// In en, this message translates to:
-  /// **'By signing in you agree to the terms of service and privacy policy.'**
-  String get signIn_eula;
-
-  /// No description provided for @signIn_explanation.
-  ///
-  /// In en, this message translates to:
-  /// **'To sign in just scan the QR-Code from the NoRiskClient Launcher under the menu option \"Social Accounts\" next to the account manager.'**
-  String get signIn_explanation;
-
-  /// No description provided for @signIn_scanQrCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan QR Code'**
-  String get signIn_scanQrCode;
-
-  /// No description provided for @signIn_signIn.
-  ///
-  /// In en, this message translates to:
-  /// **'SignIn'**
-  String get signIn_signIn;
-
-  /// No description provided for @signIn_signingIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Signing In...'**
-  String get signIn_signingIn;
-
-  /// No description provided for @profile_yourProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Profile'**
-  String get profile_yourProfile;
-
-  /// No description provided for @profile_usersProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'\'s Profile'**
-  String get profile_usersProfile;
+  /// **' doesn\'t have any pinned posts :/'**
+  String get profile_noPinnedPosts;
 
   /// No description provided for @profile_stats_firstJoin.
   ///
@@ -479,17 +515,17 @@ abstract class AppLocalizations {
   /// **'Playtime'**
   String get profile_stats_playtime;
 
-  /// No description provided for @profile_noPinnedPosts.
+  /// No description provided for @profile_usersProfile.
   ///
   /// In en, this message translates to:
-  /// **' doesn\'t have any pinned posts :/'**
-  String get profile_noPinnedPosts;
+  /// **'\'s Profile'**
+  String get profile_usersProfile;
 
-  /// No description provided for @settings_language.
+  /// No description provided for @profile_yourProfile.
   ///
   /// In en, this message translates to:
-  /// **'Language'**
-  String get settings_language;
+  /// **'Your Profile'**
+  String get profile_yourProfile;
 
   /// No description provided for @settings_blockedPlayers.
   ///
@@ -497,17 +533,23 @@ abstract class AppLocalizations {
   /// **'Blocked Players'**
   String get settings_blockedPlayers;
 
+  /// No description provided for @settings_imprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Imprint'**
+  String get settings_imprint;
+
+  /// No description provided for @settings_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settings_language;
+
   /// No description provided for @settings_legal.
   ///
   /// In en, this message translates to:
   /// **'Legal Info\'s'**
   String get settings_legal;
-
-  /// No description provided for @settings_tos.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms of Service'**
-  String get settings_tos;
 
   /// No description provided for @settings_privacyPolicy.
   ///
@@ -515,11 +557,11 @@ abstract class AppLocalizations {
   /// **'Privacy Policy'**
   String get settings_privacyPolicy;
 
-  /// No description provided for @settings_imprint.
+  /// No description provided for @settings_signOut.
   ///
   /// In en, this message translates to:
-  /// **'Imprint'**
-  String get settings_imprint;
+  /// **'Sign Out'**
+  String get settings_signOut;
 
   /// No description provided for @settings_support.
   ///
@@ -527,89 +569,53 @@ abstract class AppLocalizations {
   /// **'Support'**
   String get settings_support;
 
-  /// No description provided for @mcReal_profile_blockUserPopupTitle.
+  /// No description provided for @settings_title.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure?'**
-  String get mcReal_profile_blockUserPopupTitle;
+  /// **'Settings'**
+  String get settings_title;
 
-  /// No description provided for @mcReal_profile_blockUserPopupContent.
+  /// No description provided for @settings_tos.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to block this player?'**
-  String get mcReal_profile_blockUserPopupContent;
+  /// **'Terms of Service'**
+  String get settings_tos;
 
-  /// No description provided for @mcReal_profile_unblockUserPopupTitle.
+  /// No description provided for @signIn_eula.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure?'**
-  String get mcReal_profile_unblockUserPopupTitle;
+  /// **'By signing in you agree to the terms of service and privacy policy.'**
+  String get signIn_eula;
 
-  /// No description provided for @mcReal_profile_unblockUserPopupContent.
+  /// No description provided for @signIn_howLoginWorks.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to unblock this player?'**
-  String get mcReal_profile_unblockUserPopupContent;
+  /// **'How login works'**
+  String get signIn_howLoginWorks;
 
-  /// No description provided for @mcReal_profile_blockedPlayer.
+  /// No description provided for @signIn_howLoginWorksInfo.
   ///
   /// In en, this message translates to:
-  /// **'You have blocked this player.'**
-  String get mcReal_profile_blockedPlayer;
+  /// **'Watch this short guide and scan the QR Code'**
+  String get signIn_howLoginWorksInfo;
 
-  /// No description provided for @mcReal_blocked_noBlockedPlayers.
+  /// No description provided for @signIn_scanQrCode.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t have any blocked players.'**
-  String get mcReal_blocked_noBlockedPlayers;
+  /// **'Scan QR Code'**
+  String get signIn_scanQrCode;
 
-  /// No description provided for @chat_delete_message_title.
+  /// No description provided for @signIn_signIn.
   ///
   /// In en, this message translates to:
-  /// **'Delete Message'**
-  String get chat_delete_message_title;
+  /// **'Sign In'**
+  String get signIn_signIn;
 
-  /// No description provided for @chat_delete_message_content.
+  /// No description provided for @signIn_signingIn.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete this message?'**
-  String get chat_delete_message_content;
-
-  /// No description provided for @chat_delete_message_cancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get chat_delete_message_cancel;
-
-  /// No description provided for @chat_delete_message_delete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get chat_delete_message_delete;
-
-  /// No description provided for @chat_message_deleted.
-  ///
-  /// In en, this message translates to:
-  /// **'This message was deleted.'**
-  String get chat_message_deleted;
-
-  /// No description provided for @chat_chat_empty.
-  ///
-  /// In en, this message translates to:
-  /// **'Empty Chat'**
-  String get chat_chat_empty;
-
-  /// No description provided for @navbar_you.
-  ///
-  /// In en, this message translates to:
-  /// **'You'**
-  String get navbar_you;
-
-  /// No description provided for @gamescom_no_infos.
-  ///
-  /// In en, this message translates to:
-  /// **'There are no infos available at the moment.'**
-  String get gamescom_no_infos;
+  /// **'Signing In...'**
+  String get signIn_signingIn;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

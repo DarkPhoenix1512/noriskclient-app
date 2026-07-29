@@ -16,6 +16,7 @@ class GamescomAdmin extends StatefulWidget {
 }
 
 class _GamescomAdminState extends State<GamescomAdmin> {
+  String lastResponseMsg = "";
   String? scannedUsername;
   final TextEditingController _controller = TextEditingController();
 
@@ -29,14 +30,15 @@ class _GamescomAdminState extends State<GamescomAdmin> {
   void _redeem(String username) async {
     var res = await NoRiskApi().redeemGamescom(username);
     if (res == null || res['error'] != null) {
+      lastResponseMsg = res?['error'] ?? 'Failed to redeem for $username!';
       Fluttertoast.showToast(
-          msg: res?['error'] ?? 'Failed to redeem for $username!',
+          msg: lastResponseMsg,
           backgroundColor: Colors.red);
-      print("Failed to redeem for $username -> $res");
       return;
     } else {
+      lastResponseMsg = 'Redeemed for $username!';
       Fluttertoast.showToast(
-          msg: 'Redeemed for $username!', backgroundColor: Colors.green);
+          msg: lastResponseMsg, backgroundColor: Colors.green);
     }
   }
 
@@ -118,6 +120,11 @@ class _GamescomAdminState extends State<GamescomAdmin> {
                       TextStyle(fontSize: 25, color: NoRiskClientColors.text),
                 ),
               ),
+              const SizedBox(height: 20),
+              NoRiskText(lastResponseMsg,
+                  style:
+                      TextStyle(fontSize: 25, color: NoRiskClientColors.text),
+                  textAlign: TextAlign.center)
             ],
           ),
         ]),

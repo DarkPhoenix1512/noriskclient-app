@@ -34,7 +34,6 @@ class _GamescomAdminState extends State<GamescomAdmin> {
         lastResponseMsg = res?['error'] ?? 'Failed to redeem for $username!';
       });
       Fluttertoast.showToast(msg: lastResponseMsg, backgroundColor: Colors.red);
-      return;
     } else {
       setState(() {
         lastResponseMsg = 'Redeemed for $username!';

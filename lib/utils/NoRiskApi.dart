@@ -31,7 +31,8 @@ class NoRiskApi {
       getUpdateStream.sink.add(['signOut']);
       return null;
     } else {
-      throw Exception('Failed to load data: ${response.body}');
+      throw Exception(
+          'Failed to load data: ${response.statusCode} ${response.body}');
     }
   }
 
@@ -137,7 +138,7 @@ class NoRiskApi {
       },
     );
     if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes))
+      return {'success': utf8.decode(response.bodyBytes)}
           as Map<String, dynamic>;
     } else if (response.statusCode == 401 &&
         !utf8.decode(response.bodyBytes).contains("permission")) {

@@ -74,7 +74,7 @@ class NoRiskBottomNavigationBarState extends State<NoRiskBottomNavigationBar> {
                 label: 'gamescom',
                 onTap: () => widget.currentIndexController.sink.add(3),
                 fontSize: 21,
-                disabled: true // DateTime.now().isBefore(DateTime(2025, 8, 20))
+                disabled: DateTime.now().isAfter(DateTime(2026, 8, 30))
             ),
             _BottomNavigationBarButton(
                 index: 4,
@@ -91,7 +91,6 @@ class NoRiskBottomNavigationBarState extends State<NoRiskBottomNavigationBar> {
 
 class _BottomNavigationBarButton extends StatelessWidget {
   const _BottomNavigationBarButton({
-    super.key,
     required this.onTap,
     required this.currentIndex,
     required this.label,

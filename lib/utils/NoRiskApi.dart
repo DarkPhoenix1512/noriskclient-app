@@ -31,7 +31,8 @@ class NoRiskApi {
       getUpdateStream.sink.add(['signOut']);
       return null;
     } else {
-      throw Exception('Failed to load data: ${response.body}');
+      throw Exception(
+          'Failed to load data: ${response.statusCode} ${response.body}');
     }
   }
 
@@ -126,21 +127,10 @@ class NoRiskApi {
         "messaging", "chat/$chatId/messages", {'messageID': messageId}, null);
   }
 
-  Future<Map<String, dynamic>> getGiveawayAdminInfo(String giveawayId) async {
-    Map<String, dynamic>? data =
-        await _fetchData("cosmetics", "giveaways/admin/$giveawayId", null);
-
-    if (data == null) {
-      return {};
-    } else {
-      return data;
-    }
-  }
-
-  Future<Map<String, dynamic>?> redeemGiveaway(String giveawayId) async {
+  Future<Map<String, dynamic>?> redeemGamescom(String username) async {
     final response = await http.post(
       Uri.parse(
-          '${getBaseUrl(getUserData['experimental'], "cosmetics")}/giveaways/$giveawayId/redeem?uuid=${getUserData['uuid']}'),
+          '${getBaseUrl(getUserData['experimental'], "cosmetics")}/giveaways/gamescom/redeem?uuid=${getUserData['uuid']}&target=$username'),
       body: null,
       headers: {
         'Authorization': 'Bearer ${getUserData['token']}',
@@ -148,9 +138,10 @@ class NoRiskApi {
       },
     );
     if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes))
+      return {'success': utf8.decode(response.bodyBytes)}
           as Map<String, dynamic>;
-    } else if (response.statusCode == 401) {
+    } else if (response.statusCode == 401 &&
+        !utf8.decode(response.bodyBytes).contains("permission")) {
       getUpdateStream.sink.add(['signOut']);
       return null;
     } else {
@@ -158,23 +149,10 @@ class NoRiskApi {
     }
   }
 
-  Future<String?> isAndroidAppReleased() async {
-    final response = await http
-        .get(Uri.parse('https://dl-staging.norisk.gg/android_app_release'));
-
-    if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes))['currentVersion']
-          as String?;
-    } else {
-      return null;
-    }
-  }
-
-  Future<Map<String, dynamic>?> getGamescomInfos() async {
-    print(
-        'https://api${getUserData['experimental'] == true ? '-staging' : ''}.norisk.gg/api/v1/discord/gamescom-infos');
+  Future<List<dynamic>?> getGamescomEvents() async {
+    print('https://cdn.norisk.gg/backend-resources/gamescom_events.json');
     final response = await http.get(Uri.parse(
-        'https://api${getUserData['experimental'] == true ? '-staging' : ''}.norisk.gg/api/v1/discord/gamescom-infos'));
+        'https://cdn.norisk.gg/backend-resources/gamescom_events.json'));
 
     if (response.statusCode == 200) {
       return response.body == 'null'
@@ -182,6 +160,15 @@ class NoRiskApi {
           : jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       return null;
+    }
+  }
+
+  Future<List<dynamic>?> getUserPermissions() async {
+    List? permissions = await _fetchData<List>('core', 'permissions', null);
+    if (permissions == null) {
+      return [];
+    } else {
+      return permissions;
     }
   }
 }

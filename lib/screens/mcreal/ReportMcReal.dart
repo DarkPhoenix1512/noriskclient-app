@@ -68,7 +68,7 @@ class ReportMcRealState extends State<ReportMcReal> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
-                            child: NoRiskBackButton(onPressed: () => Navigator.of(context).pop()),
+                            child: NoRiskBackButton(),
                           )
                         ])
                   ],

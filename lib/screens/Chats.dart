@@ -50,7 +50,7 @@ class ChatsState extends State<Chats> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: true,
         backgroundColor: NoRiskClientColors.background,
         body: RefreshIndicator(
           onRefresh: () async {
@@ -67,7 +67,9 @@ class ChatsState extends State<Chats> {
                   spaceBottom: false,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontSize: 45, fontWeight: FontWeight.bold, color: NoRiskClientColors.text)),
+                      fontSize: 45,
+                      fontWeight: FontWeight.bold,
+                      color: NoRiskClientColors.text)),
               chats.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.only(top: 35),

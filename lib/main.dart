@@ -36,6 +36,7 @@ Map<String, Map<String, dynamic>> cache = {
 };
 int activeTabIndex = 2;
 final StreamController<List> updateStream = StreamController<List>();
+final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
 
 Map<String, Map<String, dynamic>> get getCache => cache;
 Map<String, dynamic> get getUserData => userData;
@@ -90,9 +91,7 @@ class AppState extends State<App> {
         if (kDebugMode) {
           print('Signing out');
         }
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
+        popToMainPage();
         activeTabIndex = 2;
         clearUserData();
         clearCache();
@@ -156,6 +155,7 @@ class AppState extends State<App> {
           builder: (context, child) {
             final provider = Provider.of<LocaleProvider>(context);
             return MaterialApp(
+              navigatorKey: appNavigatorKey,
               title: 'NoRisk Client',
               debugShowCheckedModeBanner: false,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -185,6 +185,7 @@ class AppState extends State<App> {
           builder: (context, child) {
             final provider = Provider.of<LocaleProvider>(context);
             return CupertinoApp(
+                navigatorKey: appNavigatorKey,
                 title: 'NoRisk Client',
                 debugShowCheckedModeBanner: false,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -237,6 +238,15 @@ class AppState extends State<App> {
     await prefs.remove('experimental');
     await prefs.remove('token');
     loadUserData();
+  }
+
+  void popToMainPage() {
+    final NavigatorState? navigatorState = appNavigatorKey.currentState;
+    if (navigatorState == null) {
+      return;
+    }
+
+    navigatorState.popUntil((route) => route.isFirst);
   }
 
   void clearCache() {

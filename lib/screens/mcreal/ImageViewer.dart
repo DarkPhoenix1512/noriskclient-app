@@ -29,9 +29,7 @@ class ImageViewer extends StatelessWidget {
           Positioned(
             top: 60,
             left: 10,
-            child: NoRiskBackButton(
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+            child: NoRiskBackButton(),
           ),
         ],
       ),

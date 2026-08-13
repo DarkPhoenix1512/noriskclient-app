@@ -74,10 +74,7 @@ class NoRiskBottomNavigationBarState extends State<NoRiskBottomNavigationBar> {
                 label: 'gamescom',
                 onTap: () => widget.currentIndexController.sink.add(3),
                 fontSize: 21,
-                disabled: userData['uuid'] !=
-                        '625dd22b-bad2-4b82-a0bc-e43ba1c1a7fd' &&
-                    (DateTime.now().isAfter(DateTime(2026, 8, 30)) ||
-                        DateTime.now().isBefore(DateTime(2026, 8, 26)))
+                disabled: DateTime.now().isAfter(DateTime(2026, 8, 30))
             ),
             _BottomNavigationBarButton(
                 index: 4,

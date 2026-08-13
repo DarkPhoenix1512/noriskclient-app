@@ -119,8 +119,7 @@ class SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
-                  if (DateTime.now().isBefore(DateTime(2026, 8, 31)) &&
-                      DateTime.now().isAfter(DateTime(2026, 8, 26)))
+                  if (!DateTime.now().isAfter(DateTime(2026, 8, 31)))
                   GestureDetector(
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => Gamescom())),

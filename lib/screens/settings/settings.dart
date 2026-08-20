@@ -387,11 +387,13 @@ class SettingsState extends State<Settings> {
             _ContributorRow(
               name: 'Tim Lohrer',
               contribution: 'NoRisk Client',
+              githubUrl: 'https://github.com/TimLohrer',
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 10),
             _ContributorRow(
               name: 'Nevio N.',
               contribution: 'App Redesigner',
+              githubUrl: 'https://github.com/DarkPhoenix1512',
             ),
           ],
         ),
@@ -416,46 +418,116 @@ class _ContributorRow extends StatelessWidget {
   const _ContributorRow({
     required this.name,
     required this.contribution,
+    required this.githubUrl,
   });
 
   final String name;
   final String contribution;
+  final String githubUrl;
+
+  Future<void> _openGithub() async {
+    final uri = Uri.parse(githubUrl);
+    await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          Icons.person_rounded,
-          color: NoRiskClientColors.blue,
-          size: 20,
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Material(
+      color: NoRiskClientColors.background.withAlpha(70),
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: _openGithub,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          child: Row(
             children: [
-              Text(
-                name,
-                style: TextStyle(
-                  fontFamily: 'SmallCapsMC',
-                  color: NoRiskClientColors.text,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: NoRiskClientColors.blue.withAlpha(30),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(
+                  Icons.person_rounded,
+                  color: NoRiskClientColors.blue,
+                  size: 20,
                 ),
               ),
-              Text(
-                contribution,
-                style: TextStyle(
-                  fontFamily: 'SmallCapsMC',
-                  color: NoRiskClientColors.textLight,
-                  fontSize: 9,
+              const SizedBox(width: 11),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontFamily: 'SmallCapsMC',
+                        color: NoRiskClientColors.text,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      contribution,
+                      style: TextStyle(
+                        fontFamily: 'SmallCapsMC',
+                        color: NoRiskClientColors.textLight,
+                        fontSize: 9,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 9,
+                  vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  color: NoRiskClientColors.blue.withAlpha(25),
+                  borderRadius: BorderRadius.circular(9),
+                  border: Border.all(
+                    color: NoRiskClientColors.blue.withAlpha(60),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.code_rounded,
+                      color: NoRiskClientColors.blue,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      'GitHub',
+                      style: TextStyle(
+                        fontFamily: 'SmallCapsMC',
+                        color: NoRiskClientColors.blue,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 3),
+                    Icon(
+                      Icons.arrow_outward_rounded,
+                      color: NoRiskClientColors.blue,
+                      size: 12,
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
